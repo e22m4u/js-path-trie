@@ -2,7 +2,7 @@
 
 ES-module of the path [trie](https://en.wikipedia.org/wiki/Trie) routing.
 
-- Uses [path-to-regexp](https://github.com/component/path-to-regexp) syntax.
+- Uses [path-to-regexp](https://github.com/pillarjs/path-to-regexp) syntax.
 - Supports path parameters.
 
 ## Installation
