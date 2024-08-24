@@ -13,10 +13,8 @@ npm install @e22m4u/js-path-trie
 
 ## Example
 
-- `add(pathTemplate: string, value: unknown)`  
-  *\- adds a value by the path template*
-- `match(path: string)`  
-  *\- value lookup by the given path*
+- `add(pathTemplate: string, value: unknown)` - adds a value by the path template
+- `match(path: string)` - value lookup by the given path
 
 ```js
 const trie = new PathTrie();
