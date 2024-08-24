@@ -46,7 +46,7 @@ trie.match('/foo/bar/baz');
 
 ## Debug
 
-Do set environment variable `DEBUG=jsPathTrie*` before start.
+Set environment variable `DEBUG=jsPathTrie*` before start.
 
 ```bash
 DEBUG=jsPathTrie* npm run test
