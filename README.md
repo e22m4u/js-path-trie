@@ -1,61 +1,69 @@
 ## @e22m4u/js-path-trie
 
-ES-module of the path [trie](https://en.wikipedia.org/wiki/Trie) routing.
+ES-модуль маршрутизации на основе [префиксного дерева](https://ru.wikipedia.org/wiki/Trie).
 
-- Uses [path-to-regexp](https://github.com/pillarjs/path-to-regexp) syntax.
-- Supports path parameters.
+- Использует [path-to-regexp](https://github.com/pillarjs/path-to-regexp) синтаксис.
+- Поддержка параметров маршрута.
 
-## Installation
+## Установка
 
 ```bash
 npm install @e22m4u/js-path-trie
 ```
 
-## Example
+## Пример
 
-- `add(pathTemplate: string, value: unknown)` - adds a value by the path template
-- `match(path: string)` - value lookup by the given path
+- `add(pathTemplate: string, value: unknown)` - добавить значение маршрута
+- `match(path: string)` - поиск значения по заданному маршруту
 
 ```js
 const trie = new PathTrie();
 
-// add values to the trie
+// объявление маршрутов выполняется
+// методом "add", который принимает
+// шаблон маршрута и его значение
 trie.add('/foo/bar', yourValue1);
 trie.add('/foo/:p1/bar/:p2', yourValue2);
 
-// path matching
+// для поиска значения используется
+// метод "match", который возвращает
+// значение маршрута и его параметры
 trie.match('/foo/bar');
 // {
 //   value: yourValue1,
 //   params: {}
 // }
 
-// path matching (with parameters)
+// если маршрут имеет параметры,
+// то их значения вернуться
+// в результате поиска
 trie.match('/foo/10/bar/20');
 // {
 //   value: yourValue2,
 //   params: {p1: 10, p2: 20}
 // }
 
-// if not matched
+// если маршрут не найден,
+// то возвращается "undefined"
 trie.match('/foo/bar/baz');
 // undefined
 ```
 
-## Debug
+## Отладка
 
-Set environment variable `DEBUG=jsPathTrie*` before start.
+Что бы включить вывод логов, требуется установить переменную
+окружения `DEBUG` перед запуском.
 
 ```bash
 DEBUG=jsPathTrie* npm run test
 ```
 
-## Tests
+## Тестирование
 
 ```bash
 npm run test
 ```
 
-## License
+## Лицензия
 
 MIT

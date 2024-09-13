@@ -1,7 +1,7 @@
 {
   "name": "@e22m4u/js-path-trie",
   "version": "0.0.1",
-  "description": "The path trie routing",
+  "description": "Маршрутизатор на основе префиксного дерева",
   "type": "module",
   "main": "src/index.js",
   "scripts": {
