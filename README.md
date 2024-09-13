@@ -40,7 +40,7 @@ trie.match('/foo/bar');
 trie.match('/foo/10/bar/20');
 // {
 //   value: yourValue2,
-//   params: {p1: 10, p2: 20} <= параметры
+//   params: {p1: 10, p2: 20}
 // }
 
 // если маршрут не найден,
