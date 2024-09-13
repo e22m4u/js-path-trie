@@ -1,6 +1,6 @@
 {
   "name": "@e22m4u/js-path-trie",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Маршрутизатор на основе префиксного дерева",
   "type": "module",
   "main": "src/index.js",
