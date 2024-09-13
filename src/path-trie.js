@@ -176,11 +176,13 @@ export class PathTrie {
           modifiers[0],
           '/' + tokens.join('/'),
         );
-      // создаем регулярное выражение
-      // используя текущий токен
-      let re;
+      // определение регулярного выражения
+      // и параметров текущего токена
+      let regexp, keys;
       try {
-        re = pathToRegexp(token);
+        const regexpAndKeys = pathToRegexp(token);
+        regexp = regexpAndKeys.regexp;
+        keys = regexpAndKeys.keys;
       } catch (error) {
         // если параметры не найдены, то выбрасываем
         // ошибку неправильного использования
@@ -197,9 +199,9 @@ export class PathTrie {
       }
       // записываем имена параметров и регулярное
       // выражение в создаваемый узел
-      if (Array.isArray(re.keys) && re.keys.length) {
-        child.names = re.keys.map(p => `${p.name}`);
-        child.regexp = re;
+      if (Array.isArray(keys) && keys.length) {
+        child.names = keys.map(p => `${p.name}`);
+        child.regexp = regexp;
       }
       // если параметры не найдены, то выбрасываем
       // ошибку неправильного использования

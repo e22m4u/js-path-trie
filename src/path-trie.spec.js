@@ -163,7 +163,7 @@ describe('PathTrie', function () {
         children: {
           ':date-:time': {
             token: ':date-:time',
-            regexp: pathToRegexp(':date-:time'),
+            regexp: pathToRegexp(':date-:time').regexp,
             names: ['date', 'time'],
             value: VALUE,
             children: {},
@@ -189,7 +189,7 @@ describe('PathTrie', function () {
             children: {
               ':id': {
                 token: ':id',
-                regexp: pathToRegexp(':id'),
+                regexp: pathToRegexp(':id').regexp,
                 names: ['id'],
                 value: undefined,
                 children: {
