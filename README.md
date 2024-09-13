@@ -13,7 +13,7 @@ npm install @e22m4u/js-path-trie
 
 ## Пример
 
-- `add(pathTemplate: string, value: unknown)` - добавить значение маршрута
+- `add(pathTemplate: string, value: unknown)` - добавить значение к новому маршруту
 - `match(path: string)` - поиск значения по заданному маршруту
 
 ```js
