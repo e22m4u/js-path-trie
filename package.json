@@ -1,6 +1,6 @@
 {
   "name": "@e22m4u/js-path-trie",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "A router based on a prefix tree (trie).",
   "type": "module",
   "main": "src/index.js",
