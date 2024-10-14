@@ -2,7 +2,8 @@
 
 *English | [Русский](./README-ru.md)*
 
-A router based on a [prefix tree](https://en.wikipedia.org/wiki/Trie) (trie).
+A router for Node.js based on
+a [prefix tree](https://en.wikipedia.org/wiki/Trie) (trie).
 
 - Uses [path-to-regexp](https://github.com/pillarjs/path-to-regexp) syntax.
 - Supports path parameters.

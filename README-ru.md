@@ -2,7 +2,8 @@
 
 *[English](./README.md) | Русский*
 
-Маршрутизатор на основе [префиксного дерева](https://ru.wikipedia.org/wiki/Trie) (trie).
+Маршрутизатор для Node.js на основе
+[префиксного дерева](https://ru.wikipedia.org/wiki/Trie) (trie).
 
 - Использует [path-to-regexp](https://github.com/pillarjs/path-to-regexp) синтаксис.
 - Поддерживает параметры маршрута.
