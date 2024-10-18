@@ -10,6 +10,8 @@
 
 ## Установка
 
+Требуется Node.js 16 и выше.
+
 ```bash
 npm install @e22m4u/js-path-trie
 ```
