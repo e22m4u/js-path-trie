@@ -28,12 +28,14 @@ import {PathTrie} from '@e22m4u/js-path-trie';
 const {PathTrie} = require('@e22m4u/js-path-trie');
 ```
 
-## Example
+## Overview
 
 The `PathTrie` class has the following methods:
 
 - `add(pathTemplate: string, value: unknown)` adds a value to a new route
 - `match(path: string)` returns a value by a given path
+
+Example:
 
 ```js
 import {PathTrie} from '@e22m4u/js-path-trie';
