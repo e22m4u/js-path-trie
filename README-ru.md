@@ -14,8 +14,19 @@
 npm install @e22m4u/js-path-trie
 ```
 
-Для загрузки ES-модуля требуется установить `"type": "module"` в файле
-`package.json`, или использовать `.mjs` расширение.
+Модуль поддерживает ESM и CommonJS стандарты.
+
+*ESM*
+
+```js
+import {PathTrie} from '@e22m4u/js-path-trie';
+```
+
+*CommonJS*
+
+```js
+const {PathTrie} = require('@e22m4u/js-path-trie');
+```
 
 ## Пример
 
@@ -23,6 +34,8 @@ npm install @e22m4u/js-path-trie
 - `match(path: string)` - поиск значения по заданному маршруту
 
 ```js
+import {PathTrie} from '@e22m4u/js-path-trie';
+
 const trie = new PathTrie();
 
 // добавление маршрутов выполняется
@@ -57,7 +70,7 @@ trie.match('/foo/bar/baz');
 
 ## Отладка
 
-Установка переменной `DEBUG` перед командой запуска включает вывод логов.
+Установка переменной `DEBUG` включает вывод логов.
 
 ```bash
 DEBUG=jsPathTrie* npm run test

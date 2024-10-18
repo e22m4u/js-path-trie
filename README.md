@@ -14,8 +14,19 @@ a [prefix tree](https://en.wikipedia.org/wiki/Trie) (trie).
 npm install @e22m4u/js-path-trie
 ```
 
-To load the ES-module, you need to set `"type": "module"`
-in the `package.json` file, or use the `.mjs` extension.
+The module supports ESM and CommonJS standards.
+
+*ESM*
+
+```js
+import {PathTrie} from '@e22m4u/js-path-trie';
+```
+
+*CommonJS*
+
+```js
+const {PathTrie} = require('@e22m4u/js-path-trie');
+```
 
 ## Example
 
@@ -23,6 +34,8 @@ in the `package.json` file, or use the `.mjs` extension.
 - `match(path: string)` returns a value by a given path
 
 ```js
+import {PathTrie} from '@e22m4u/js-path-trie';
+
 const trie = new PathTrie();
 
 // route registration is performed using
@@ -57,7 +70,7 @@ trie.match('/foo/bar/baz');
 
 ## Debugging
 
-Set the `DEBUG` variable before the run command to enable log output.
+Set the `DEBUG` variable to enable log output.
 
 ```bash
 DEBUG=jsPathTrie* npm run test
