@@ -28,7 +28,7 @@ import {PathTrie} from '@e22m4u/js-path-trie';
 const {PathTrie} = require('@e22m4u/js-path-trie');
 ```
 
-## Overview
+## Обзор
 
 Класс `PathTrie` имеет следующие методы:
 
