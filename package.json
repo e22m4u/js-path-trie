@@ -19,7 +19,7 @@
     "format": "prettier --write \"./src/**/*.js\"",
     "test": "npm run lint && c8 --reporter=text-summary mocha",
     "test:coverage": "npm run lint && c8 --reporter=text mocha",
-    "build:cjs": "node build-cjs.js",
+    "build:cjs": "rimraf ./dist/cjs && node --no-warnings=ExperimentalWarning build-cjs.js",
     "prepare": "husky"
   },
   "repository": {
@@ -55,6 +55,7 @@
     "husky": "~9.1.6",
     "mocha": "~10.8.2",
     "prettier": "~3.3.3",
+    "rimraf": "^6.0.1",
     "typescript": "~5.6.3"
   }
 }
