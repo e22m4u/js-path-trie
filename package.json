@@ -3,6 +3,7 @@
   "version": "0.0.6",
   "description": "A router for Node.js based on a prefix tree",
   "type": "module",
+  "types": "./src/index.d.ts",
   "module": "./src/index.js",
   "main": "./dist/cjs/index.cjs",
   "exports": {
