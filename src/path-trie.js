@@ -123,30 +123,40 @@ export class PathTrie {
         'Invalid index %v has passed to the PathTrie._createNode.',
         index,
       );
-    // если добавляемый узел является последним,
-    // а его токен уже существует, то проверяем
-    // наличие значения в существующем узле
-    const isLast = tokens.length - 1 === index;
+    // проверка существования узла
+    // по текущему токену
     let child = parent.children[token];
-    if (isLast && child != null) {
-      debug('The node %v already exist.', token);
-      // если существующий узел не имеет
-      // значения, то устанавливаем
-      if (child.value == null) {
-        child.value = value;
+    const isLast = tokens.length - 1 === index;
+    if (child) {
+      // если узел не является последним,
+      // то переходим к следующему
+      if (!isLast) {
+        debug('The node %v already exist.', token);
+        return this._createNode(tokens, index + 1, value, child);
       }
-      // если существующий узел имеет значение
-      // отличное от устанавливаемого,
-      // то выбрасываем ошибку
-      else if (child.value !== value) {
-        throw new Errorf(
-          'The duplicate path %v has a different value.',
-          '/' + tokens.join('/'),
-        );
+      // если узел является последним,
+      // то проверяем наличие значения
+      else {
+        debug('The node %v already exist.', token);
+        // если существующий узел не имеет
+        // значения, то устанавливаем текущее
+        if (child.value == null) {
+          debug('The node %v has the same value.', token);
+          child.value = value;
+        }
+        // если существующий узел имеет
+        // значение отличное от текущего,
+        // то выбрасываем ошибку
+        else if (child.value !== value) {
+          throw new Errorf(
+            'The duplicate path %v has a different value.',
+            '/' + tokens.join('/'),
+          );
+        }
+        // так как данный токен является последним,
+        // то возвращаем существующий узел
+        return child;
       }
-      // так как данный токен является последним,
-      // то возвращаем существующий узел
-      return child;
     }
     debug('The node %v does not exist.', token);
     // создаем новый узел, и если токен является

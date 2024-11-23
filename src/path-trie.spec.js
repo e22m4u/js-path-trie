@@ -227,6 +227,43 @@ describe('PathTrie', function () {
           'but no parameters found in the path "/:".',
       );
     });
+
+    it('does not overrides value when set another one to the middle', function () {
+      const trie = new PathTrie();
+      trie.add('/foo/bar/baz', VALUE);
+      trie.add('/foo/bar', ANOTHER_VALUE);
+      expect(trie['_root']).to.be.eql({
+        token: '',
+        regexp: undefined,
+        names: [],
+        value: undefined,
+        children: {
+          foo: {
+            token: 'foo',
+            regexp: undefined,
+            names: [],
+            value: undefined,
+            children: {
+              bar: {
+                token: 'bar',
+                regexp: undefined,
+                names: [],
+                value: ANOTHER_VALUE,
+                children: {
+                  baz: {
+                    token: 'baz',
+                    regexp: undefined,
+                    names: [],
+                    value: VALUE,
+                    children: {},
+                  },
+                },
+              },
+            },
+          },
+        },
+      });
+    });
   });
 
   describe('match', function () {

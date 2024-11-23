@@ -134,19 +134,25 @@ var _PathTrie = class _PathTrie {
         "Invalid index %v has passed to the PathTrie._createNode.",
         index
       );
-    const isLast = tokens.length - 1 === index;
     let child = parent.children[token];
-    if (isLast && child != null) {
-      debug("The node %v already exist.", token);
-      if (child.value == null) {
-        child.value = value;
-      } else if (child.value !== value) {
-        throw new import_js_format2.Errorf(
-          "The duplicate path %v has a different value.",
-          "/" + tokens.join("/")
-        );
+    const isLast = tokens.length - 1 === index;
+    if (child) {
+      if (!isLast) {
+        debug("The node %v already exist.", token);
+        return this._createNode(tokens, index + 1, value, child);
+      } else {
+        debug("The node %v already exist.", token);
+        if (child.value == null) {
+          debug("The node %v has the same value.", token);
+          child.value = value;
+        } else if (child.value !== value) {
+          throw new import_js_format2.Errorf(
+            "The duplicate path %v has a different value.",
+            "/" + tokens.join("/")
+          );
+        }
+        return child;
       }
-      return child;
     }
     debug("The node %v does not exist.", token);
     child = {
