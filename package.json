@@ -36,7 +36,7 @@
   "license": "MIT",
   "homepage": "https://github.com/e22m4u/js-path-trie",
   "dependencies": {
-    "@e22m4u/js-format": "~0.1.7",
+    "@e22m4u/js-format": "~0.1.0",
     "debug": "~4.4.0",
     "path-to-regexp": "~8.2.0"
   },
