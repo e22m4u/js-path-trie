@@ -1,7 +1,7 @@
 {
   "name": "@e22m4u/js-path-trie",
   "version": "0.0.9",
-  "description": "A router for Node.js based on a prefix tree",
+  "description": "Маршрутизатор для Node.js на основе префиксного дерева",
   "author": "e22m4u <e22m4u@yandex.ru>",
   "license": "MIT",
   "keywords": [
