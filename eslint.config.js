@@ -22,7 +22,7 @@ export default [{
     ...eslintJs.configs.recommended.rules,
     ...eslintPrettierConfig.rules,
     ...eslintJsdocPlugin.configs['flat/recommended-error'].rules,
-    ...eslintMochaPlugin.configs.flat.recommended.rules,
+    ...eslintMochaPlugin.configs.recommended.rules,
     ...eslintChaiExpectPlugin.configs['recommended-flat'].rules,
     'no-unused-vars': ['error', {'caughtErrors': 'none'}],
     'jsdoc/require-param-description': 0,
