@@ -2,7 +2,7 @@
   "name": "@e22m4u/js-path-trie",
   "version": "0.0.10",
   "description": "Маршрутизатор для Node.js на основе префиксного дерева",
-  "author": "e22m4u <e22m4u@yandex.ru>",
+  "author": "Mikhail Evstropov <e22m4u@yandex.ru>",
   "license": "MIT",
   "keywords": [
     "path",
@@ -36,8 +36,8 @@
     "prepare": "husky"
   },
   "dependencies": {
-    "@e22m4u/js-format": "~0.1.0",
-    "debug": "~4.4.0",
+    "@e22m4u/js-format": "~0.1.8",
+    "debug": "~4.4.1",
     "path-to-regexp": "~8.2.0"
   },
   "devDependencies": {
