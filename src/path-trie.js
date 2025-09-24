@@ -1,6 +1,6 @@
 import {Errorf} from '@e22m4u/js-format';
+import {Debuggable} from '@e22m4u/js-debug';
 import {pathToRegexp} from 'path-to-regexp';
-import {createDebugger} from './utils/index.js';
 
 /**
  * @typedef {{
@@ -16,16 +16,16 @@ import {createDebugger} from './utils/index.js';
  */
 
 /**
- * Debug.
- *
- * @type {Function}
- */
-const debug = createDebugger();
-
-/**
  * Path trie.
  */
-export class PathTrie {
+export class PathTrie extends Debuggable {
+  /**
+   * Constructor.
+   */
+  constructor() {
+    super({noEnvNs: true, namespace: 'jsPathTrie'});
+  }
+
   /**
    * Root node.
    *
@@ -48,18 +48,19 @@ export class PathTrie {
    * @returns {this}
    */
   add(pathTemplate, value) {
+    const debug = this.getDebuggerFor(this.add);
     if (typeof pathTemplate !== 'string')
       throw new Errorf(
-        'The first argument of PathTrie.add should be ' +
-          'a String, but %v given.',
+        'The first argument of PathTrie.add must be a String, ' +
+          'but %v was given.',
         pathTemplate,
       );
     if (value == null)
       throw new Errorf(
-        'The second argument of PathTrie.add is required, but %v given.',
+        'The second argument of PathTrie.add is required, but %v was given.',
         value,
       );
-    debug('Adding the value to %v.', pathTemplate);
+    debug('Adding a value for the path %v.', pathTemplate);
     const tokens = pathTemplate.split('/').filter(Boolean);
     this._createNode(tokens, 0, value, this._root);
     return this;
@@ -72,13 +73,14 @@ export class PathTrie {
    * @returns {ResolvedValue|undefined}
    */
   match(path) {
+    const debug = this.getDebuggerFor(this.match);
     if (typeof path !== 'string')
       throw new Errorf(
-        'The first argument of PathTrie.match should be ' +
-          'a String, but %v given.',
+        'The first argument of PathTrie.match must be a String, ' +
+          'but %v was given.',
         path,
       );
-    debug('Matching a value with the path %v.', path);
+    debug('Matching a value for the path %v.', path);
     const tokens = path.split('/').filter(Boolean);
     const params = {};
     const result = this._matchNode(tokens, 0, params, this._root);
@@ -97,70 +99,43 @@ export class PathTrie {
    * @private
    */
   _createNode(tokens, index, value, parent) {
-    // если массив токенов пуст, а индекс нулевой,
-    // то проверяем возможность установки значения
-    // в родителя
+    const debug = this.getDebuggerFor(this._createNode);
     if (tokens.length === 0 && index === 0) {
-      // если корневой узел не имеет
-      // значения, то устанавливаем
       if (parent.value == null) {
         parent.value = value;
-      }
-      // если корневой узел имеет значение
-      // отличное от устанавливаемого,
-      // то выбрасываем ошибку
-      else if (parent.value !== value) {
+      } else if (parent.value !== value) {
         throw new Errorf('The duplicate path "" has a different value.');
       }
-      debug('The value has set to the root node.');
+      debug('The value has been set for the root node.');
       return parent;
     }
-    // проверка существования токена
-    // по данному индексу
     const token = tokens[index];
     if (token == null)
       throw new Errorf(
-        'Invalid index %v has passed to the PathTrie._createNode.',
+        'Invalid index %v was passed to PathTrie._createNode.',
         index,
       );
-    // проверка существования узла
-    // по текущему токену
     let child = parent.children[token];
     const isLast = tokens.length - 1 === index;
     if (child) {
-      // если узел не является последним,
-      // то переходим к следующему
       if (!isLast) {
-        debug('The node %v already exist.', token);
+        debug('The node %v already exists.', token);
         return this._createNode(tokens, index + 1, value, child);
-      }
-      // если узел является последним,
-      // то проверяем наличие значения
-      else {
-        debug('The node %v already exist.', token);
-        // если существующий узел не имеет
-        // значения, то устанавливаем текущее
+      } else {
+        debug('The node %v already exists.', token);
         if (child.value == null) {
           debug('The node %v has the same value.', token);
           child.value = value;
-        }
-        // если существующий узел имеет
-        // значение отличное от текущего,
-        // то выбрасываем ошибку
-        else if (child.value !== value) {
+        } else if (child.value !== value) {
           throw new Errorf(
             'The duplicate path %v has a different value.',
             '/' + tokens.join('/'),
           );
         }
-        // так как данный токен является последним,
-        // то возвращаем существующий узел
         return child;
       }
     }
     debug('The node %v does not exist.', token);
-    // создаем новый узел, и если токен является
-    // последним, то сразу устанавливаем значение
     child = {
       token,
       regexp: undefined,
@@ -169,16 +144,11 @@ export class PathTrie {
       children: {},
     };
     if (isLast) {
-      debug('The node %v is last.', token);
+      debug('The node %v is the last.', token);
       child.value = value;
     }
-    // если токен содержит параметры,
-    // то записываем их имена и регулярное
-    // выражение в создаваемый узел
     if (token.indexOf(':') > -1) {
       debug('The node %v has parameters.', token);
-      // если токен содержит неподдерживаемые
-      // модификаторы, то выбрасываем ошибку
       const modifiers = /([?*+{}])/.exec(token);
       if (modifiers)
         throw new Errorf(
@@ -186,51 +156,34 @@ export class PathTrie {
           modifiers[0],
           '/' + tokens.join('/'),
         );
-      // определение регулярного выражения
-      // и параметров текущего токена
       let regexp, keys;
       try {
         const regexpAndKeys = pathToRegexp(token);
         regexp = regexpAndKeys.regexp;
         keys = regexpAndKeys.keys;
       } catch (error) {
-        // если параметры не найдены, то выбрасываем
-        // ошибку неправильного использования
-        // символа ":"
         if (error.message.indexOf('Missing parameter') > -1)
           throw new Errorf(
             'The symbol ":" should be used to define path parameters, ' +
-              'but no parameters found in the path %v.',
+              'but no parameters were found in the path %v.',
             '/' + tokens.join('/'),
           );
-        // если ошибка неизвестна,
-        // то выбрасываем как есть
         throw error;
       }
-      // записываем имена параметров и регулярное
-      // выражение в создаваемый узел
       if (Array.isArray(keys) && keys.length) {
         child.names = keys.map(p => `${p.name}`);
         child.regexp = regexp;
-      }
-      // если параметры не найдены, то выбрасываем
-      // ошибку неправильного использования
-      // символа ":"
-      else {
+      } else {
         throw new Errorf(
           'The symbol ":" should be used to define path parameters, ' +
-            'but no parameters found in the path %v.',
+            'but no parameters were found in the path %v.',
           '/' + tokens.join('/'),
         );
       }
-      debug('Found parameters are %l.', child.names);
+      debug('The found parameters are %l.', child.names);
     }
-    // записываем новый узел в родителя
     parent.children[token] = child;
-    debug('The node %v has created.', token);
-    // если текущий узел является последним,
-    // то возвращаем его, или продолжаем
-    // смещать индекс
+    debug('The node %v has been created.', token);
     if (isLast) return child;
     return this._createNode(tokens, index + 1, value, child);
   }
@@ -246,39 +199,26 @@ export class PathTrie {
    * @private
    */
   _matchNode(tokens, index, params, parent) {
-    // если массив токенов пуст, а индекс нулевой,
-    // то проверяем наличие значения в родителе
+    const debug = this.getDebuggerFor(this._matchNode);
     if (tokens.length === 0 && index === 0) {
       if (parent.value) {
-        debug(
-          'The path %v matched with the root node.',
-          '/' + tokens.join('/'),
-        );
+        debug('The path %v matched the root node.', '/' + tokens.join('/'));
         return {node: parent, params};
       }
-      // если родительский узел не имеет
-      // значения, то возвращаем "undefined"
       return;
     }
-    // проверка существования токена
-    // по данному индексу
     const token = tokens[index];
     if (token == null)
       throw new Errorf(
-        'Invalid index %v has passed to the PathTrie._matchNode.',
+        'Invalid index %v was passed to PathTrie._matchNode.',
         index,
       );
-    // если текущий токен не соответствует
-    // ни одному узлу, то возвращаем "undefined"
     const resolvedNodes = this._matchChildrenNodes(token, parent);
-    debug('%v nodes matches the token %v.', resolvedNodes.length, token);
+    debug('%v nodes match the token %v.', resolvedNodes.length, token);
     if (!resolvedNodes.length) return;
-    // если текущий токен последний,
-    // то возвращаем первый дочерний
-    // узел, который имеет значение
     const isLast = tokens.length - 1 === index;
     if (isLast) {
-      debug('The token %v is last.', token);
+      debug('The token %v is the last.', token);
       for (const child of resolvedNodes) {
         debug('The node %v matches the token %v.', child.node.token, token);
         if (child.node.value) {
@@ -300,14 +240,14 @@ export class PathTrie {
           return {node: child.node, params};
         }
       }
-    }
-    // если токен промежуточный, то проходим
-    // вглубь каждого дочернего узла
-    else {
+    } else {
       for (const child of resolvedNodes) {
         const result = this._matchNode(tokens, index + 1, params, child.node);
         if (result) {
-          debug('A value has found for the path %v.', '/' + tokens.join('/'));
+          debug(
+            'A value has been found for the path %v.',
+            '/' + tokens.join('/'),
+          );
           const paramNames = Object.keys(child.params);
           if (paramNames.length) {
             paramNames.forEach(name => {
@@ -326,10 +266,10 @@ export class PathTrie {
         }
       }
     }
-    // если поиск по дочерним узлам
-    // родителя не привел к результату,
-    // то возвращаем "undefined"
-    debug('No matched nodes with the path %v.', '/' + tokens.join('/'));
+    debug(
+      'No matching nodes were found for the path %v.',
+      '/' + tokens.join('/'),
+    );
     return undefined;
   }
 
@@ -343,34 +283,22 @@ export class PathTrie {
    */
   _matchChildrenNodes(token, parent) {
     const resolvedNodes = [];
-    // если найден узел по литералу токена,
-    // то нет необходимости продолжать поиск
-    // по узлам с параметрами, а можно немедленно
-    // вернуть его в качестве результата
     let child = parent.children[token];
     if (child) {
       resolvedNodes.push({node: child, params: {}});
       return resolvedNodes;
     }
-    // поиск по узлам с параметрами выполняется
-    // путем сопоставления токена с регулярным
-    // выражением каждого узла
     for (const key in parent.children) {
       child = parent.children[key];
       if (!child.names || !child.regexp) continue;
       const match = child.regexp.exec(token);
       if (match) {
         const resolved = {node: child, params: {}};
-        // так как параметры имеют тот же порядок,
-        // что и вхождения, последовательно перебираем,
-        // и присваиваем вхождения с соответствующим
-        // индексом в качестве значений
         let i = 0;
         for (const name of child.names) {
           const val = match[++i];
           resolved.params[name] = decodeURIComponent(val);
         }
-        // добавление узла к результату
         resolvedNodes.push(resolved);
       }
     }

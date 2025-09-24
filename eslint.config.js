@@ -25,6 +25,7 @@ export default [{
     ...eslintMochaPlugin.configs.recommended.rules,
     ...eslintChaiExpectPlugin.configs['recommended-flat'].rules,
     'no-unused-vars': ['error', {'caughtErrors': 'none'}],
+    'jsdoc/reject-any-type': 0,
     'jsdoc/require-param-description': 0,
     'jsdoc/require-returns-description': 0,
     'jsdoc/require-property-description': 0,

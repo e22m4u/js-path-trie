@@ -13,8 +13,8 @@ describe('PathTrie', function () {
       const throwable = v => () => trie.add(v, VALUE);
       const error = v =>
         format(
-          'The first argument of PathTrie.add should be ' +
-            'a String, but %s given.',
+          'The first argument of PathTrie.add must be a String, ' +
+            'but %s was given.',
           v,
         );
       expect(throwable(10)).to.throw(error('10'));
@@ -36,7 +36,7 @@ describe('PathTrie', function () {
       };
       const error = v =>
         format(
-          'The second argument of PathTrie.add is required, but %s given.',
+          'The second argument of PathTrie.add is required, but %s was given.',
           v,
         );
       expect(throwable(undefined)).to.throw(error('undefined'));
@@ -224,7 +224,7 @@ describe('PathTrie', function () {
       const throwable = () => trie.add('/:', VALUE);
       expect(throwable).to.throw(
         'The symbol ":" should be used to define path parameters, ' +
-          'but no parameters found in the path "/:".',
+          'but no parameters were found in the path "/:".',
       );
     });
 
@@ -272,8 +272,8 @@ describe('PathTrie', function () {
       const throwable = v => () => trie.match(v);
       const error = v =>
         format(
-          'The first argument of PathTrie.match should be ' +
-            'a String, but %s given.',
+          'The first argument of PathTrie.match must be ' +
+            'a String, but %s was given.',
           v,
         );
       expect(throwable(10)).to.throw(error('10'));
