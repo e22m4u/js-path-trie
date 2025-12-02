@@ -9,17 +9,15 @@
     "trie",
     "router"
   ],
-  "homepage": "https://github.com/e22m4u/js-path-trie",
+  "homepage": "https://gitrepos.ru/e22m4u/js-path-trie",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/e22m4u/js-path-trie.git"
+    "url": "git+https://gitrepos.ru/e22m4u/js-path-trie.git"
   },
   "type": "module",
-  "types": "./src/index.d.ts",
   "module": "./src/index.js",
   "main": "./dist/cjs/index.cjs",
   "exports": {
-    "types": "./src/index.d.ts",
     "import": "./src/index.js",
     "require": "./dist/cjs/index.cjs"
   },
@@ -27,8 +25,8 @@
     "node": ">=16"
   },
   "scripts": {
-    "lint": "tsc && eslint ./src",
-    "lint:fix": "tsc && eslint ./src --fix",
+    "lint": "eslint ./src",
+    "lint:fix": "eslint ./src --fix",
     "format": "prettier --write \"./src/**/*.js\"",
     "test": "npm run lint && c8 --reporter=text-summary mocha",
     "test:coverage": "npm run lint && c8 --reporter=text mocha",
@@ -36,8 +34,8 @@
     "prepare": "husky"
   },
   "dependencies": {
-    "@e22m4u/js-debug": "~0.3.3",
-    "@e22m4u/js-format": "~0.2.1",
+    "@e22m4u/js-debug": "~0.4.0",
+    "@e22m4u/js-format": "~0.3.0",
     "path-to-regexp": "~8.3.0"
   },
   "devDependencies": {
@@ -50,13 +48,13 @@
     "eslint": "~9.39.1",
     "eslint-config-prettier": "~10.1.8",
     "eslint-plugin-chai-expect": "~3.1.0",
+    "eslint-plugin-import": "^2.32.0",
     "eslint-plugin-jsdoc": "~61.4.1",
     "eslint-plugin-mocha": "~11.2.0",
     "globals": "~16.5.0",
     "husky": "~9.1.7",
     "mocha": "~11.7.5",
-    "prettier": "~3.6.2",
-    "rimraf": "~6.1.2",
-    "typescript": "~5.9.3"
+    "prettier": "~3.7.3",
+    "rimraf": "~6.1.2"
   }
 }
