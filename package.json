@@ -1,6 +1,6 @@
 {
   "name": "@e22m4u/js-path-trie",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Маршрутизатор для Node.js на основе префиксного дерева",
   "author": "Mikhail Evstropov <e22m4u@yandex.ru>",
   "license": "MIT",
