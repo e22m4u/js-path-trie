@@ -1,7 +1,7 @@
 ## @e22m4u/js-path-trie
 
 Маршрутизатор для Node.js на основе
-[префиксного дерева](https://ru.wikipedia.org/wiki/Trie) (Trie).
+[префиксного дерева](https://ru.wikipedia.org/wiki/Trie) (trie).
 
 - Использует [path-to-regexp](https://github.com/pillarjs/path-to-regexp) синтаксис.
 - Поддерживает параметры маршрута.
