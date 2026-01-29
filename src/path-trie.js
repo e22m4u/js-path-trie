@@ -49,17 +49,19 @@ export class PathTrie extends Debuggable {
    */
   add(pathTemplate, value) {
     const debug = this.getDebuggerFor(this.add);
-    if (typeof pathTemplate !== 'string')
+    if (typeof pathTemplate !== 'string') {
       throw new Errorf(
         'The first argument of PathTrie.add must be a String, ' +
           'but %v was given.',
         pathTemplate,
       );
-    if (value == null)
+    }
+    if (value == null) {
       throw new Errorf(
         'The second argument of PathTrie.add is required, but %v was given.',
         value,
       );
+    }
     debug('Adding a value for the path %v.', pathTemplate);
     const tokens = pathTemplate.split('/').filter(Boolean);
     this._createNode(tokens, 0, value, this._root);
@@ -74,17 +76,20 @@ export class PathTrie extends Debuggable {
    */
   match(path) {
     const debug = this.getDebuggerFor(this.match);
-    if (typeof path !== 'string')
+    if (typeof path !== 'string') {
       throw new Errorf(
         'The first argument of PathTrie.match must be a String, ' +
           'but %v was given.',
         path,
       );
+    }
     debug('Matching a value for the path %v.', path);
     const tokens = path.split('/').filter(Boolean);
     const params = {};
     const result = this._matchNode(tokens, 0, params, this._root);
-    if (!result || !result.node.value) return;
+    if (!result || !result.node.value) {
+      return;
+    }
     return {value: result.node.value, params};
   }
 
@@ -110,11 +115,12 @@ export class PathTrie extends Debuggable {
       return parent;
     }
     const token = tokens[index];
-    if (token == null)
+    if (token == null) {
       throw new Errorf(
         'Invalid index %v was passed to PathTrie._createNode.',
         index,
       );
+    }
     let child = parent.children[token];
     const isLast = tokens.length - 1 === index;
     if (child) {
@@ -150,24 +156,26 @@ export class PathTrie extends Debuggable {
     if (token.indexOf(':') > -1) {
       debug('The node %v has parameters.', token);
       const modifiers = /([?*+{}])/.exec(token);
-      if (modifiers)
+      if (modifiers) {
         throw new Errorf(
           'The symbol %v is not supported in path %v.',
           modifiers[0],
           '/' + tokens.join('/'),
         );
+      }
       let regexp, keys;
       try {
         const regexpAndKeys = pathToRegexp(token);
         regexp = regexpAndKeys.regexp;
         keys = regexpAndKeys.keys;
       } catch (error) {
-        if (error.message.indexOf('Missing parameter') > -1)
+        if (error.message.indexOf('Missing parameter') > -1) {
           throw new Errorf(
             'The symbol ":" should be used to define path parameters, ' +
               'but no parameters were found in the path %v.',
             '/' + tokens.join('/'),
           );
+        }
         throw error;
       }
       if (Array.isArray(keys) && keys.length) {
@@ -184,7 +192,9 @@ export class PathTrie extends Debuggable {
     }
     parent.children[token] = child;
     debug('The node %v has been created.', token);
-    if (isLast) return child;
+    if (isLast) {
+      return child;
+    }
     return this._createNode(tokens, index + 1, value, child);
   }
 
@@ -208,14 +218,17 @@ export class PathTrie extends Debuggable {
       return;
     }
     const token = tokens[index];
-    if (token == null)
+    if (token == null) {
       throw new Errorf(
         'Invalid index %v was passed to PathTrie._matchNode.',
         index,
       );
+    }
     const resolvedNodes = this._matchChildrenNodes(token, parent);
     debug('%v nodes match the token %v.', resolvedNodes.length, token);
-    if (!resolvedNodes.length) return;
+    if (!resolvedNodes.length) {
+      return;
+    }
     const isLast = tokens.length - 1 === index;
     if (isLast) {
       debug('The token %v is the last.', token);
@@ -290,7 +303,9 @@ export class PathTrie extends Debuggable {
     }
     for (const key in parent.children) {
       child = parent.children[key];
-      if (!child.names || !child.regexp) continue;
+      if (!child.names || !child.regexp) {
+        continue;
+      }
       const match = child.regexp.exec(token);
       if (match) {
         const resolved = {node: child, params: {}};
