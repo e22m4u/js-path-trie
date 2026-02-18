@@ -72,6 +72,9 @@ var _PathTrie = class _PathTrie extends import_js_debug.Debuggable {
     }
     debug("Adding a value for the path %v.", pathTemplate);
     const tokens = pathTemplate.split("/").filter(Boolean);
+    if (pathTemplate.endsWith("/")) {
+      tokens.push("");
+    }
     this._createNode(tokens, 0, value, this._root);
     return this;
   }
@@ -91,6 +94,9 @@ var _PathTrie = class _PathTrie extends import_js_debug.Debuggable {
     }
     debug("Matching a value for the path %v.", path);
     const tokens = path.split("/").filter(Boolean);
+    if (path.endsWith("/")) {
+      tokens.push("");
+    }
     const params = {};
     const result = this._matchNode(tokens, 0, params, this._root);
     if (!result || !result.node.value) {

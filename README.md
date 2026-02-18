@@ -32,8 +32,8 @@ const {PathTrie} = require('@e22m4u/js-path-trie');
 
 Класс `PathTrie` имеет следующие методы:
 
-- `add(pathTemplate: string, value: unknown)` добавить значение к новому маршруту
-- `match(path: string)` поиск значения по заданному маршруту
+- `add(pathTemplate: string, value: unknown)` добавить значение к новому маршруту;
+- `match(path: string)` поиск значения по заданному маршруту;
 
 Пример:
 
@@ -70,6 +70,18 @@ trie.match('/foo/10/bar/20');
 // то возвращается "undefined"
 trie.match('/foo/bar/baz');
 // undefined
+```
+
+Различие маршрутов с завершающим слешем (trailing slash) и без.
+
+```js
+// добавление маршрутов
+trie.add('/foo/bar', 10);
+trie.add('/foo/bar/', 20);
+
+// поиск значений
+trie.match('/foo/bar'); // {value: 10, params: {}}
+trie.match('/foo/bar/'); // {value: 20, params: {}}
 ```
 
 ## Отладка

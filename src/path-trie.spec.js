@@ -8,7 +8,7 @@ const ANOTHER_VALUE = 'myValue2';
 
 describe('PathTrie', function () {
   describe('add', function () {
-    it('requires the first parameter to be a String', function () {
+    it('should require the parameter "pathTemplate" to be a String', function () {
       const trie = new PathTrie();
       const throwable = v => () => trie.add(v, VALUE);
       const error = v =>
@@ -29,7 +29,7 @@ describe('PathTrie', function () {
       throwable('')();
     });
 
-    it('requires the second parameter', function () {
+    it('should require the parameter "value" to be a non-nullish value', function () {
       const throwable = v => () => {
         const trie = new PathTrie();
         trie.add('foo', v);
@@ -51,7 +51,7 @@ describe('PathTrie', function () {
       throwable([])();
     });
 
-    it('adds the given value with the path "" to the root node', function () {
+    it('should add a value to the root node when the root path is an empty string', function () {
       const trie = new PathTrie();
       expect(trie['_root']).to.be.eql({
         token: '',
@@ -70,7 +70,7 @@ describe('PathTrie', function () {
       });
     });
 
-    it('adds the given value with the path "/" to the root node', function () {
+    it('should create a child node with an empty string token when the root path has a forward slash', function () {
       const trie = new PathTrie();
       expect(trie['_root']).to.be.eql({
         token: '',
@@ -84,12 +84,20 @@ describe('PathTrie', function () {
         token: '',
         regexp: undefined,
         names: [],
-        value: VALUE,
-        children: {},
+        value: undefined,
+        children: {
+          '': {
+            token: '',
+            regexp: undefined,
+            names: [],
+            value: VALUE,
+            children: {},
+          },
+        },
       });
     });
 
-    it('throws an error for the duplicate path "" with a different value', function () {
+    it('should throw an error for the duplicate path "" with a different value', function () {
       const trie = new PathTrie();
       trie.add('', VALUE);
       const throwable = () => trie.add('', ANOTHER_VALUE);
@@ -98,25 +106,22 @@ describe('PathTrie', function () {
       );
     });
 
-    it('throws an error for the duplicate path "/" with a different value', function () {
+    it('should throw an error for the duplicate path "/" with a different value', function () {
       const trie = new PathTrie();
       trie.add('/', VALUE);
       const throwable = () => trie.add('/', ANOTHER_VALUE);
       expect(throwable).to.throw(
-        'The duplicate path "" has a different value.',
+        'The duplicate path "/" has a different value.',
       );
     });
 
-    it('considers paths "" and "/" are the same', function () {
+    it('should consider the root path "" and the path with a forward slash "/" are not the same', function () {
       const trie = new PathTrie();
       trie.add('', VALUE);
-      const throwable = () => trie.add('/', ANOTHER_VALUE);
-      expect(throwable).to.throw(
-        'The duplicate path "" has a different value.',
-      );
+      trie.add('/', ANOTHER_VALUE);
     });
 
-    it('adds multiple nodes by the path which has multiple tokens', function () {
+    it('should add multiple nodes by the path which has multiple tokens', function () {
       const trie = new PathTrie();
       trie.add('foo/bar/baz', VALUE);
       expect(trie['_root']).to.be.eql({
@@ -152,7 +157,51 @@ describe('PathTrie', function () {
       });
     });
 
-    it('resolves path parameters in the first node', function () {
+    it('should create a nested node with an empty string token when the path with multiple tokens has a trailing slash', function () {
+      const trie = new PathTrie();
+      trie.add('foo/bar/baz/', VALUE);
+      expect(trie['_root']).to.be.eql({
+        token: '',
+        regexp: undefined,
+        names: [],
+        value: undefined,
+        children: {
+          foo: {
+            token: 'foo',
+            regexp: undefined,
+            names: [],
+            value: undefined,
+            children: {
+              bar: {
+                token: 'bar',
+                regexp: undefined,
+                names: [],
+                value: undefined,
+                children: {
+                  baz: {
+                    token: 'baz',
+                    regexp: undefined,
+                    names: [],
+                    value: undefined,
+                    children: {
+                      '': {
+                        token: '',
+                        regexp: undefined,
+                        names: [],
+                        value: VALUE,
+                        children: {},
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      });
+    });
+
+    it('should resolve path parameters in the first node', function () {
       const trie = new PathTrie();
       trie.add(':date-:time', VALUE);
       expect(trie['_root']).to.be.eql({
@@ -172,7 +221,7 @@ describe('PathTrie', function () {
       });
     });
 
-    it('resolves path parameters in the middle node', function () {
+    it('should resolve path parameters in the middle node', function () {
       const trie = new PathTrie();
       trie.add('/foo/:id/bar', VALUE);
       expect(trie['_root']).to.be.eql({
@@ -208,7 +257,43 @@ describe('PathTrie', function () {
       });
     });
 
-    it('throws an error for unsupported modifiers', function () {
+    it('should resolve path parameters in the last node', function () {
+      const trie = new PathTrie();
+      trie.add('/foo/bar/:id', VALUE);
+      expect(trie['_root']).to.be.eql({
+        token: '',
+        regexp: undefined,
+        names: [],
+        value: undefined,
+        children: {
+          foo: {
+            token: 'foo',
+            regexp: undefined,
+            names: [],
+            value: undefined,
+            children: {
+              bar: {
+                token: 'bar',
+                regexp: undefined,
+                names: [],
+                value: undefined,
+                children: {
+                  ':id': {
+                    token: ':id',
+                    regexp: pathToRegexp(':id').regexp,
+                    names: ['id'],
+                    value: VALUE,
+                    children: {},
+                  },
+                },
+              },
+            },
+          },
+        },
+      });
+    });
+
+    it('should throw an error for unsupported modifiers', function () {
       const modifiers = ['?', '*', '+', '{', '}'];
       const trie = new PathTrie();
       const throwable = v => () => trie.add(v, VALUE);
@@ -219,7 +304,7 @@ describe('PathTrie', function () {
       });
     });
 
-    it('throws an error if no parameter name has specified', function () {
+    it('should throw an error if no parameter name is specified', function () {
       const trie = new PathTrie();
       const throwable = () => trie.add('/:', VALUE);
       expect(throwable).to.throw(
@@ -228,7 +313,7 @@ describe('PathTrie', function () {
       );
     });
 
-    it('does not overrides value when set another one to the middle', function () {
+    it('should not override value when set another one to the middle', function () {
       const trie = new PathTrie();
       trie.add('/foo/bar/baz', VALUE);
       trie.add('/foo/bar', ANOTHER_VALUE);
@@ -267,7 +352,7 @@ describe('PathTrie', function () {
   });
 
   describe('match', function () {
-    it('requires the first parameter to be a String', function () {
+    it('should require the parameter "path" to be a String', function () {
       const trie = new PathTrie();
       const throwable = v => () => trie.match(v);
       const error = v =>
@@ -288,32 +373,38 @@ describe('PathTrie', function () {
       throwable('')();
     });
 
-    it('matches paths "" and "/" or returns undefined', function () {
+    it('should match the root path "" or return undefined', function () {
       const trie = new PathTrie();
+      expect(trie.match('')).to.be.undefined;
       trie.add('', VALUE);
-      const res1 = trie.match('');
-      const res2 = trie.match('/');
-      const res3 = trie.match('/test');
-      expect(res1).to.be.eql({value: VALUE, params: {}});
-      expect(res2).to.be.eql({value: VALUE, params: {}});
-      expect(res3).to.be.undefined;
+      expect(trie.match('')).to.be.eql({value: VALUE, params: {}});
+      expect(trie.match('/')).to.be.undefined;
+      expect(trie.match('/test')).to.be.undefined;
+      expect(trie.match('/test/')).to.be.undefined;
     });
 
-    it('returns undefined if not matched', function () {
+    it('should match the root path "/" or return undefined', function () {
       const trie = new PathTrie();
-      trie.add('foo', VALUE);
-      const res = trie.match('bar');
-      expect(res).to.be.undefined;
+      expect(trie.match('/')).to.be.undefined;
+      trie.add('/', VALUE);
+      expect(trie.match('/')).to.be.eql({value: VALUE, params: {}});
+      expect(trie.match('')).to.be.undefined;
+      expect(trie.match('/test')).to.be.undefined;
+      expect(trie.match('/test/')).to.be.undefined;
     });
 
-    it('matches the single token', function () {
+    it('should match the path with a single token or return undefined', function () {
       const trie = new PathTrie();
+      expect(trie.match('foo')).to.be.undefined;
       trie.add('foo', VALUE);
-      const res = trie.match('foo');
-      expect(res).to.be.eql({value: VALUE, params: {}});
+      expect(trie.match('foo')).to.be.eql({value: VALUE, params: {}});
+      expect(trie.match('')).to.be.undefined;
+      expect(trie.match('/')).to.be.undefined;
+      expect(trie.match('/bar')).to.be.undefined;
+      expect(trie.match('/bar/')).to.be.undefined;
     });
 
-    it('does not respects the prefix "/"', function () {
+    it('should ignore a forward slash "/" as the path prefix', function () {
       const trie = new PathTrie();
       trie.add('/foo', VALUE);
       const res1 = trie.match('/foo');
@@ -322,16 +413,17 @@ describe('PathTrie', function () {
       expect(res2).to.be.eql({value: VALUE, params: {}});
     });
 
-    it('does not respects the postfix "/"', function () {
+    it('should respect a forward slash "/" as the trailing slash', function () {
       const trie = new PathTrie();
-      trie.add('/foo', VALUE);
-      const res1 = trie.match('foo/');
-      const res2 = trie.match('foo');
+      trie.add('foo', VALUE);
+      trie.add('foo/', ANOTHER_VALUE);
+      const res1 = trie.match('foo');
+      const res2 = trie.match('foo/');
       expect(res1).to.be.eql({value: VALUE, params: {}});
-      expect(res2).to.be.eql({value: VALUE, params: {}});
+      expect(res2).to.be.eql({value: ANOTHER_VALUE, params: {}});
     });
 
-    it('matches parameters of the first token', function () {
+    it('should match parameters of the first token', function () {
       const trie = new PathTrie();
       trie.add(':foo-:bar', VALUE);
       const res = trie.match('baz-qux');
@@ -344,7 +436,7 @@ describe('PathTrie', function () {
       });
     });
 
-    it('matches parameters of the first token in the case of multiple tokens', function () {
+    it('should match parameters of the first token in the case of multiple tokens', function () {
       const trie = new PathTrie();
       trie.add(':foo-:bar/test', VALUE);
       const res = trie.match('baz-qux/test');
@@ -357,7 +449,7 @@ describe('PathTrie', function () {
       });
     });
 
-    it('matches parameters of the second token', function () {
+    it('should match parameters of the second token', function () {
       const trie = new PathTrie();
       trie.add('/test/:foo-:bar', VALUE);
       const res = trie.match('/test/baz-qux');
@@ -370,14 +462,14 @@ describe('PathTrie', function () {
       });
     });
 
-    it('does not match a path which has more tokens than needed', function () {
+    it('should ignore the path which has more tokens than needed', function () {
       const trie = new PathTrie();
       trie.add('/foo', VALUE);
       const res = trie.match('/foo/bar');
       expect(res).to.be.undefined;
     });
 
-    it('does not match a path which has less tokens than needed', function () {
+    it('should ignore the path which has less tokens than needed', function () {
       const trie = new PathTrie();
       trie.add('/foo/bar', VALUE);
       const res = trie.match('/foo');
