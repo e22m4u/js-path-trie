@@ -4,11 +4,11 @@ import {pathToRegexp} from 'path-to-regexp';
 
 /**
  * @typedef {{
- *   token: string,
+ *   segment: string,
  *   regexp: RegExp | undefined,
  *   names: string[],
  *   value: *,
- *   children: {[token: string]: Node},
+ *   children: {[segment: string]: Node},
  * }} Node
  *
  * @typedef {{value: *, params: object}} ResolvedValue
@@ -33,7 +33,7 @@ export class PathTrie extends Debuggable {
    * @private
    */
   _root = {
-    token: '',
+    segment: '',
     regexp: undefined,
     names: [],
     value: undefined,
@@ -63,11 +63,11 @@ export class PathTrie extends Debuggable {
       );
     }
     debug('Adding a value for the path %v.', pathTemplate);
-    const tokens = pathTemplate.split('/').filter(Boolean);
+    const segments = pathTemplate.split('/').filter(Boolean);
     if (pathTemplate.endsWith('/')) {
-      tokens.push('');
+      segments.push('');
     }
-    this._createNode(tokens, 0, value, this._root);
+    this._createNode(segments, 0, value, this._root);
     return this;
   }
 
@@ -87,12 +87,12 @@ export class PathTrie extends Debuggable {
       );
     }
     debug('Matching a value for the path %v.', path);
-    const tokens = path.split('/').filter(Boolean);
+    const segments = path.split('/').filter(Boolean);
     if (path.endsWith('/')) {
-      tokens.push('');
+      segments.push('');
     }
     const params = {};
-    const result = this._matchNode(tokens, 0, params, this._root);
+    const result = this._matchNode(segments, 0, params, this._root);
     if (!result || !result.node.value) {
       return;
     }
@@ -102,16 +102,16 @@ export class PathTrie extends Debuggable {
   /**
    * Create node.
    *
-   * @param {string[]} tokens
+   * @param {string[]} segments
    * @param {number} index
    * @param {*} value
    * @param {Node} parent
    * @returns {Node}
    * @private
    */
-  _createNode(tokens, index, value, parent) {
+  _createNode(segments, index, value, parent) {
     const debug = this.getDebuggerFor(this._createNode);
-    if (tokens.length === 0 && index === 0) {
+    if (segments.length === 0 && index === 0) {
       if (parent.value == null) {
         parent.value = value;
       } else if (parent.value !== value) {
@@ -120,58 +120,58 @@ export class PathTrie extends Debuggable {
       debug('The value has been set for the root node.');
       return parent;
     }
-    const token = tokens[index];
-    if (token == null) {
+    const segment = segments[index];
+    if (segment == null) {
       throw new Errorf(
         'Invalid index %v was passed to PathTrie._createNode.',
         index,
       );
     }
-    let child = parent.children[token];
-    const isLast = tokens.length - 1 === index;
+    let child = parent.children[segment];
+    const isLast = segments.length - 1 === index;
     if (child) {
       if (!isLast) {
-        debug('The node %v already exists.', token);
-        return this._createNode(tokens, index + 1, value, child);
+        debug('The node %v already exists.', segment);
+        return this._createNode(segments, index + 1, value, child);
       } else {
-        debug('The node %v already exists.', token);
+        debug('The node %v already exists.', segment);
         if (child.value == null) {
-          debug('The node %v has the same value.', token);
+          debug('The node %v has the same value.', segment);
           child.value = value;
         } else if (child.value !== value) {
           throw new Errorf(
             'The duplicate path %v has a different value.',
-            '/' + tokens.join('/'),
+            '/' + segments.join('/'),
           );
         }
         return child;
       }
     }
-    debug('The node %v does not exist.', token);
+    debug('The node %v does not exist.', segment);
     child = {
-      token,
+      segment,
       regexp: undefined,
       names: [],
       value: undefined,
       children: {},
     };
     if (isLast) {
-      debug('The node %v is the last.', token);
+      debug('The node %v is the last.', segment);
       child.value = value;
     }
-    if (token.indexOf(':') > -1) {
-      debug('The node %v has parameters.', token);
-      const modifiers = /([?*+{}])/.exec(token);
+    if (segment.indexOf(':') > -1) {
+      debug('The node %v has parameters.', segment);
+      const modifiers = /([?*+{}])/.exec(segment);
       if (modifiers) {
         throw new Errorf(
           'The symbol %v is not supported in path %v.',
           modifiers[0],
-          '/' + tokens.join('/'),
+          '/' + segments.join('/'),
         );
       }
       let regexp, keys;
       try {
-        const regexpAndKeys = pathToRegexp(token);
+        const regexpAndKeys = pathToRegexp(segment);
         regexp = regexpAndKeys.regexp;
         keys = regexpAndKeys.keys;
       } catch (error) {
@@ -179,7 +179,7 @@ export class PathTrie extends Debuggable {
           throw new Errorf(
             'The symbol ":" should be used to define path parameters, ' +
               'but no parameters were found in the path %v.',
-            '/' + tokens.join('/'),
+            '/' + segments.join('/'),
           );
         }
         throw error;
@@ -191,69 +191,73 @@ export class PathTrie extends Debuggable {
         throw new Errorf(
           'The symbol ":" should be used to define path parameters, ' +
             'but no parameters were found in the path %v.',
-          '/' + tokens.join('/'),
+          '/' + segments.join('/'),
         );
       }
       debug('The found parameters are %l.', child.names);
     }
-    parent.children[token] = child;
-    debug('The node %v has been created.', token);
+    parent.children[segment] = child;
+    debug('The node %v has been created.', segment);
     if (isLast) {
       return child;
     }
-    return this._createNode(tokens, index + 1, value, child);
+    return this._createNode(segments, index + 1, value, child);
   }
 
   /**
    * Match node.
    *
-   * @param {string[]} tokens
+   * @param {string[]} segments
    * @param {number} index
    * @param {object} params
    * @param {Node} parent
    * @returns {ResolvedNode|undefined}
    * @private
    */
-  _matchNode(tokens, index, params, parent) {
+  _matchNode(segments, index, params, parent) {
     const debug = this.getDebuggerFor(this._matchNode);
-    if (tokens.length === 0 && index === 0) {
+    if (segments.length === 0 && index === 0) {
       if (parent.value) {
-        debug('The path %v matched the root node.', '/' + tokens.join('/'));
+        debug('The path %v matched the root node.', '/' + segments.join('/'));
         return {node: parent, params};
       }
       return;
     }
-    const token = tokens[index];
-    if (token == null) {
+    const segment = segments[index];
+    if (segment == null) {
       throw new Errorf(
         'Invalid index %v was passed to PathTrie._matchNode.',
         index,
       );
     }
-    const resolvedNodes = this._matchChildrenNodes(token, parent);
-    debug('%v nodes match the token %v.', resolvedNodes.length, token);
+    const resolvedNodes = this._matchChildrenNodes(segment, parent);
+    debug('%v nodes match the segment %v.', resolvedNodes.length, segment);
     if (!resolvedNodes.length) {
       return;
     }
-    const isLast = tokens.length - 1 === index;
+    const isLast = segments.length - 1 === index;
     if (isLast) {
-      debug('The token %v is the last.', token);
+      debug('The segment %v is the last.', segment);
       for (const child of resolvedNodes) {
-        debug('The node %v matches the token %v.', child.node.token, token);
+        debug(
+          'The node %v matches the segment %v.',
+          child.node.segment,
+          segment,
+        );
         if (child.node.value) {
-          debug('The node %v has a value.', child.node.token);
+          debug('The node %v has a value.', child.node.segment);
           const paramNames = Object.keys(child.params);
           if (paramNames.length) {
             paramNames.forEach(name => {
               debug(
                 'The node %v has parameter %v with the value %v.',
-                child.node.token,
+                child.node.segment,
                 name,
                 child.params[name],
               );
             });
           } else {
-            debug('The node %v has no parameters.', child.node.token);
+            debug('The node %v has no parameters.', child.node.segment);
           }
           Object.assign(params, child.params);
           return {node: child.node, params};
@@ -261,24 +265,24 @@ export class PathTrie extends Debuggable {
       }
     } else {
       for (const child of resolvedNodes) {
-        const result = this._matchNode(tokens, index + 1, params, child.node);
+        const result = this._matchNode(segments, index + 1, params, child.node);
         if (result) {
           debug(
             'A value has been found for the path %v.',
-            '/' + tokens.join('/'),
+            '/' + segments.join('/'),
           );
           const paramNames = Object.keys(child.params);
           if (paramNames.length) {
             paramNames.forEach(name => {
               debug(
                 'The node %v has parameter %v with the value %v.',
-                child.node.token,
+                child.node.segment,
                 name,
                 child.params[name],
               );
             });
           } else {
-            debug('The node %v has no parameters.', child.node.token);
+            debug('The node %v has no parameters.', child.node.segment);
           }
           Object.assign(params, child.params);
           return result;
@@ -287,7 +291,7 @@ export class PathTrie extends Debuggable {
     }
     debug(
       'No matching nodes were found for the path %v.',
-      '/' + tokens.join('/'),
+      '/' + segments.join('/'),
     );
     return undefined;
   }
@@ -295,14 +299,14 @@ export class PathTrie extends Debuggable {
   /**
    * Match children nodes.
    *
-   * @param {string} token
+   * @param {string} segment
    * @param {Node} parent
    * @returns {ResolvedNode[]}
    * @private
    */
-  _matchChildrenNodes(token, parent) {
+  _matchChildrenNodes(segment, parent) {
     const resolvedNodes = [];
-    let child = parent.children[token];
+    let child = parent.children[segment];
     if (child) {
       resolvedNodes.push({node: child, params: {}});
       return resolvedNodes;
@@ -312,7 +316,7 @@ export class PathTrie extends Debuggable {
       if (!child.names || !child.regexp) {
         continue;
       }
-      const match = child.regexp.exec(token);
+      const match = child.regexp.exec(segment);
       if (match) {
         const resolved = {node: child, params: {}};
         let i = 0;

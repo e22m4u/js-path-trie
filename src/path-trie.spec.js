@@ -54,7 +54,7 @@ describe('PathTrie', function () {
     it('should add a value to the root node when the root path is an empty string', function () {
       const trie = new PathTrie();
       expect(trie['_root']).to.be.eql({
-        token: '',
+        segment: '',
         regexp: undefined,
         names: [],
         value: undefined,
@@ -62,7 +62,7 @@ describe('PathTrie', function () {
       });
       trie.add('', VALUE);
       expect(trie['_root']).to.be.eql({
-        token: '',
+        segment: '',
         regexp: undefined,
         names: [],
         value: VALUE,
@@ -70,10 +70,10 @@ describe('PathTrie', function () {
       });
     });
 
-    it('should create a child node with an empty string token when the root path has a forward slash', function () {
+    it('should create a child node with an empty string segment when the root path has a forward slash', function () {
       const trie = new PathTrie();
       expect(trie['_root']).to.be.eql({
-        token: '',
+        segment: '',
         regexp: undefined,
         names: [],
         value: undefined,
@@ -81,13 +81,13 @@ describe('PathTrie', function () {
       });
       trie.add('/', VALUE);
       expect(trie['_root']).to.be.eql({
-        token: '',
+        segment: '',
         regexp: undefined,
         names: [],
         value: undefined,
         children: {
           '': {
-            token: '',
+            segment: '',
             regexp: undefined,
             names: [],
             value: VALUE,
@@ -121,29 +121,29 @@ describe('PathTrie', function () {
       trie.add('/', ANOTHER_VALUE);
     });
 
-    it('should add multiple nodes by the path which has multiple tokens', function () {
+    it('should add multiple nodes by the path which has multiple segments', function () {
       const trie = new PathTrie();
       trie.add('foo/bar/baz', VALUE);
       expect(trie['_root']).to.be.eql({
-        token: '',
+        segment: '',
         regexp: undefined,
         names: [],
         value: undefined,
         children: {
           foo: {
-            token: 'foo',
+            segment: 'foo',
             regexp: undefined,
             names: [],
             value: undefined,
             children: {
               bar: {
-                token: 'bar',
+                segment: 'bar',
                 regexp: undefined,
                 names: [],
                 value: undefined,
                 children: {
                   baz: {
-                    token: 'baz',
+                    segment: 'baz',
                     regexp: undefined,
                     names: [],
                     value: VALUE,
@@ -157,35 +157,35 @@ describe('PathTrie', function () {
       });
     });
 
-    it('should create a nested node with an empty string token when the path with multiple tokens has a trailing slash', function () {
+    it('should create a nested node with an empty string segment when the path with multiple segments has a trailing slash', function () {
       const trie = new PathTrie();
       trie.add('foo/bar/baz/', VALUE);
       expect(trie['_root']).to.be.eql({
-        token: '',
+        segment: '',
         regexp: undefined,
         names: [],
         value: undefined,
         children: {
           foo: {
-            token: 'foo',
+            segment: 'foo',
             regexp: undefined,
             names: [],
             value: undefined,
             children: {
               bar: {
-                token: 'bar',
+                segment: 'bar',
                 regexp: undefined,
                 names: [],
                 value: undefined,
                 children: {
                   baz: {
-                    token: 'baz',
+                    segment: 'baz',
                     regexp: undefined,
                     names: [],
                     value: undefined,
                     children: {
                       '': {
-                        token: '',
+                        segment: '',
                         regexp: undefined,
                         names: [],
                         value: VALUE,
@@ -205,13 +205,13 @@ describe('PathTrie', function () {
       const trie = new PathTrie();
       trie.add(':date-:time', VALUE);
       expect(trie['_root']).to.be.eql({
-        token: '',
+        segment: '',
         regexp: undefined,
         names: [],
         value: undefined,
         children: {
           ':date-:time': {
-            token: ':date-:time',
+            segment: ':date-:time',
             regexp: pathToRegexp(':date-:time').regexp,
             names: ['date', 'time'],
             value: VALUE,
@@ -225,25 +225,25 @@ describe('PathTrie', function () {
       const trie = new PathTrie();
       trie.add('/foo/:id/bar', VALUE);
       expect(trie['_root']).to.be.eql({
-        token: '',
+        segment: '',
         regexp: undefined,
         names: [],
         value: undefined,
         children: {
           foo: {
-            token: 'foo',
+            segment: 'foo',
             regexp: undefined,
             names: [],
             value: undefined,
             children: {
               ':id': {
-                token: ':id',
+                segment: ':id',
                 regexp: pathToRegexp(':id').regexp,
                 names: ['id'],
                 value: undefined,
                 children: {
                   bar: {
-                    token: 'bar',
+                    segment: 'bar',
                     regexp: undefined,
                     names: [],
                     value: VALUE,
@@ -261,25 +261,25 @@ describe('PathTrie', function () {
       const trie = new PathTrie();
       trie.add('/foo/bar/:id', VALUE);
       expect(trie['_root']).to.be.eql({
-        token: '',
+        segment: '',
         regexp: undefined,
         names: [],
         value: undefined,
         children: {
           foo: {
-            token: 'foo',
+            segment: 'foo',
             regexp: undefined,
             names: [],
             value: undefined,
             children: {
               bar: {
-                token: 'bar',
+                segment: 'bar',
                 regexp: undefined,
                 names: [],
                 value: undefined,
                 children: {
                   ':id': {
-                    token: ':id',
+                    segment: ':id',
                     regexp: pathToRegexp(':id').regexp,
                     names: ['id'],
                     value: VALUE,
@@ -318,25 +318,25 @@ describe('PathTrie', function () {
       trie.add('/foo/bar/baz', VALUE);
       trie.add('/foo/bar', ANOTHER_VALUE);
       expect(trie['_root']).to.be.eql({
-        token: '',
+        segment: '',
         regexp: undefined,
         names: [],
         value: undefined,
         children: {
           foo: {
-            token: 'foo',
+            segment: 'foo',
             regexp: undefined,
             names: [],
             value: undefined,
             children: {
               bar: {
-                token: 'bar',
+                segment: 'bar',
                 regexp: undefined,
                 names: [],
                 value: ANOTHER_VALUE,
                 children: {
                   baz: {
-                    token: 'baz',
+                    segment: 'baz',
                     regexp: undefined,
                     names: [],
                     value: VALUE,
@@ -393,7 +393,7 @@ describe('PathTrie', function () {
       expect(trie.match('/test/')).to.be.undefined;
     });
 
-    it('should match the path with a single token or return undefined', function () {
+    it('should match the path with a single segment or return undefined', function () {
       const trie = new PathTrie();
       expect(trie.match('foo')).to.be.undefined;
       trie.add('foo', VALUE);
@@ -423,7 +423,7 @@ describe('PathTrie', function () {
       expect(res2).to.be.eql({value: ANOTHER_VALUE, params: {}});
     });
 
-    it('should match parameters of the first token', function () {
+    it('should match parameters of the first segment', function () {
       const trie = new PathTrie();
       trie.add(':foo-:bar', VALUE);
       const res = trie.match('baz-qux');
@@ -436,7 +436,7 @@ describe('PathTrie', function () {
       });
     });
 
-    it('should match parameters of the first token in the case of multiple tokens', function () {
+    it('should match parameters of the first segment in the case of multiple segments', function () {
       const trie = new PathTrie();
       trie.add(':foo-:bar/test', VALUE);
       const res = trie.match('baz-qux/test');
@@ -449,7 +449,7 @@ describe('PathTrie', function () {
       });
     });
 
-    it('should match parameters of the second token', function () {
+    it('should match parameters of the second segment', function () {
       const trie = new PathTrie();
       trie.add('/test/:foo-:bar', VALUE);
       const res = trie.match('/test/baz-qux');
@@ -462,14 +462,14 @@ describe('PathTrie', function () {
       });
     });
 
-    it('should ignore the path which has more tokens than needed', function () {
+    it('should ignore the path which has more segments than needed', function () {
       const trie = new PathTrie();
       trie.add('/foo', VALUE);
       const res = trie.match('/foo/bar');
       expect(res).to.be.undefined;
     });
 
-    it('should ignore the path which has less tokens than needed', function () {
+    it('should ignore the path which has less segments than needed', function () {
       const trie = new PathTrie();
       trie.add('/foo/bar', VALUE);
       const res = trie.match('/foo');
