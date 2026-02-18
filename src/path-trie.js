@@ -231,7 +231,7 @@ export class PathTrie extends Debuggable {
       );
     }
     const resolvedNodes = this._matchChildrenNodes(segment, parent);
-    debug('%v nodes match the segment %v.', resolvedNodes.length, segment);
+    debug('%v node(s) match the segment %v.', resolvedNodes.length, segment);
     if (!resolvedNodes.length) {
       return;
     }
