@@ -9,10 +9,10 @@
     "trie",
     "router"
   ],
-  "homepage": "https://gitrepos.ru/e22m4u/js-path-trie",
+  "homepage": "https://gitverse.ru/e22m4u/js-path-trie",
   "repository": {
     "type": "git",
-    "url": "git+https://gitrepos.ru/e22m4u/js-path-trie.git"
+    "url": "git+https://gitverse.ru/e22m4u/js-path-trie.git"
   },
   "type": "module",
   "types": "./src/index.d.ts",
