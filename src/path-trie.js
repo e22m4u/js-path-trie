@@ -23,7 +23,7 @@ export class PathTrie extends Debuggable {
    * Constructor.
    */
   constructor() {
-    super({namespace: 'jsPathTrie', noEnvironmentNamespace: true});
+    super({namespace: 'jsPathTrie', noGlobalNamespace: true});
   }
 
   /**

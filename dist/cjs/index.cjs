@@ -34,7 +34,7 @@ var _PathTrie = class _PathTrie extends import_js_debug.Debuggable {
    * Constructor.
    */
   constructor() {
-    super({ namespace: "jsPathTrie", noEnvironmentNamespace: true });
+    super({ namespace: "jsPathTrie", noGlobalNamespace: true });
   }
   /**
    * Root node.
