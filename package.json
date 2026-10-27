@@ -24,7 +24,7 @@
     "require": "./dist/cjs/index.cjs"
   },
   "engines": {
-    "node": ">=16"
+    "node": ">=22"
   },
   "scripts": {
     "lint": "tsc && eslint ./src",
